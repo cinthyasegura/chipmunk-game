@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import Grid from './components/Grid';
+import Score from './components/Score';
 
 
 export class App extends Component {
@@ -19,23 +19,134 @@ export class App extends Component {
     }
 
     this.state = {
-      grid
+      grid,
+      acorn: {
+        row:  Math.floor(Math.random() * 16),
+        col:  Math.floor(Math.random() * 16)
+      },
+      chipmunk: {
+        head: {
+          row: Math.floor(Math.random() * 16),
+          col: Math.floor(Math.random() * 16)
+        },
+        tail: [],
+        direction: {
+          x: 1,
+          y: 0
+        },
+      },
+      gameOver: false
     };
   }
+
+  
+  setAcorn = (cell) => {
+    const { acorn } = this.state;
+    return acorn.row === cell.row 
+      && acorn.col === cell.col;
+  }
+
+  setChipmunkHead = (cell) => {
+    const { chipmunk: { head } } = this.state;
+    return head.row === cell.row 
+      && head.col === cell.col
+  } 
+
+  setChipmunkTail = (cell) => {
+    const { chipmunk: { tail } } = this.state;
+    return tail.find(theTail => theTail.row === cell.row && theTail.col === cell.col);   
+  }
+
+
+  setDirection = (e) => {
+    e = e || window.event;
+    switch (e.keyCode) {
+      case 37:
+        this.setState(({chipmunk}) => ({
+          chipmunk: {
+            ...chipmunk,
+            direction: {
+              x: 1,
+              y: 0,
+            }
+          }
+        }))
+      break;
+      case 38:
+        this.setState(({chipmunk}) => ({
+          chipmunk: {
+            ...chipmunk,
+            direction: {
+              x: 0,
+              y: 1,
+            }
+          }
+        }))
+      break;
+      case 39:
+        this.setState(({chipmunk}) => ({
+          chipmunk: {
+            ...chipmunk,
+            direction: {
+              x: -1,
+              y: 0,
+            }
+          }
+        }))
+      break;
+      case 40:
+        this.setState(({chipmunk}) => ({
+          chipmunk: {
+            ...chipmunk,
+            direction: {
+              x: 0,
+              y: -1,
+            }
+          }
+        }))
+      break;
+      default:
+        this.setState(({chipmunk}) => ({
+          chipmunk: {
+            ...chipmunk,
+            direction: {
+              x: -1,
+              y: 0,
+            }
+          }
+        }))
+      break;
+    }
+  } 
+
+
   render() {
-    const { grid } = this.state;
+    const { grid, chipmunk, gameOver } = this.state;
     return (
       <>
-        <Grid />
-        <div className="grid">
+        {
+        gameOver
+          ? <h1>Game Over! You scored {chipmunk.tail.length}!</h1>
+          : <>
+          <Score score={chipmunk.tail.length}/>
+          <div className="grid">
           {
-            grid.map((row, i) => (
+            grid.map(row => (
               row.map(cell => (
-                <div className="cell"  key={`${cell.row} ${cell.col}`}></div>
+                <div  key={`${cell.row},${cell.col}`} className={`cell
+                ${
+                  this.setChipmunkHead(cell)
+                  ? 'chipmunkHead': this.setAcorn(cell)
+                  ? 'acorn': this.setChipmunkTail(cell)
+                  ? 'tail': ''
+                  }`
+                }></div>
               ))
             ))
           }
         </div>
+        </>
+        }
       </>
     )
   }

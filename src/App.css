@@ -14,3 +14,13 @@
   outline: 1px solid lightgray;
   display: inline-block;
 }
+.acorn {
+  background-image: url(./icons/acorn.svg);
+}
+.chipmunkHead {
+  background-image: url(./icons/chipmunk.svg);
+}
+.tail {
+  background: #9F7267;
+  border-radius: 50%;
+}
