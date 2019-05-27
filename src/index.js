@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Grids from './Grids';
+import Game from './Game';
 
-ReactDOM.render(<Grids />, document.getElementById('root'));
+ReactDOM.render(<Game />, document.getElementById('root'));
 
 
