@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Header from './Header'
 import './Game.css';
+import Board from './Board';
 
 const getRandomPosition = () =>  Math.floor(Math.random() * 16)
 const getRandomChipmunk =  Math.floor(Math.random() * 12 + 2)
@@ -51,7 +52,9 @@ export class Game extends Component {
     document.addEventListener('keydown', (e) => {
       this.setDirection(e);
     });
-    
+    setTimeout(() => {
+      this.gameLoop()
+    }, 500);
    
   };
   
@@ -195,28 +198,36 @@ export class Game extends Component {
     const { grid, chipmunk, gameOver } = this.state;
     return (
       <>
-          <div className="container">
-            <Header 
-              score={chipmunk.tail.length-2}
-              playHandler={this.gameLoop}
-            />
-            <div className="grid">
-              {
-              grid.map(row => (
-                row.map(cell => (
-                  <div key={`${cell.row},${cell.col}`} className={`cell
-                  ${
-                  this.setChipmunkHead(cell)
-                  ? 'chipmunkHead': this.setAcorn(cell)
-                  ? 'acorn': this.setChipmunkTail(cell)
-                  ? 'tail': ''
-                  }`
-                  }></div>
+        <div className="container">
+          <Header score={chipmunk.tail.length-2}/> 
+          {
+            gameOver &&
+            <button className="d-inline">Jugar de nuevo</button>
+          }        
+          <div className="row">
+            <section className="col-md-6">
+              <div className="grid">
+                {
+                grid.map(row => (
+                  row.map(cell => (
+                    <div key={`${cell.row},${cell.col}`} className={`cell
+                    ${
+                    this.setChipmunkHead(cell)
+                    ? 'chipmunkHead': this.setAcorn(cell)
+                    ? 'acorn': this.setChipmunkTail(cell)
+                    ? 'tail': ''
+                    }`
+                    }></div>
+                  ))
                 ))
-              ))
-              }
+                }
+              </div>
+            </section>
+            <div className="col-md-4">
+              <Board score={chipmunk.tail.length-2} />
             </div>
           </div>
+        </div>         
       </>
     )
   }
