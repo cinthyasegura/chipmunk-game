@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Board = ({ score }) => {
+const Board = ({ scores }) => {
 
   return (
     <>
@@ -13,14 +13,20 @@ const Board = ({ score }) => {
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>
-                    Partida #1
-                </td>
-                <td>
-                    {score}
-                </td>
-            </tr>
+            {scores.length > 0 &&
+                scores.map((score, idx) => (
+                    <tr key={idx}>
+                    <td>
+                        Partida {idx + 1}
+                    </td>
+                    <td>
+                        {score}
+                    </td>
+                </tr>
+
+                ))
+            }
+           
         </tbody>
       </table>
     </>

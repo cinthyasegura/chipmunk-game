@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Header from './Header'
 import './Game.css';
 import Board from './Board';
 
@@ -18,7 +17,7 @@ export class Game extends Component {
       grid.push(cols);
     }
 
-    const initialState = {
+    this.state = {
       grid,
       acorn: {
         row: getRandomPosition(),
@@ -26,7 +25,7 @@ export class Game extends Component {
       },
       gameOver: false,
       gameId: 1,
-      score: [],
+      scores: [],
       chipmunk: {
         head: {
           row: getRandomChipmunk,
@@ -48,7 +47,6 @@ export class Game extends Component {
         }
       }
     }
-    this.state = initialState;   
   };
 
   componentDidMount = () => {
@@ -59,6 +57,7 @@ export class Game extends Component {
       this.gameLoop()
     }, 500); 
   };  
+
   componentWillUnmount = () => {
     clearInterval(this.gameLoop)
   }
@@ -86,16 +85,6 @@ export class Game extends Component {
     return true;
     }
   }
-  resetGame = () =>
-    this.setState((prevState) => ({
-      gameId: prevState.gameId + 1,
-    }));
-
-    initialStatus = () => {
-      this.setState((prevState) => {
-
-      })
-    }
 
   collidesWithAcorn = () => {
     const { acorn, chipmunk } = this.state;
@@ -115,11 +104,9 @@ export class Game extends Component {
     }
   };
 
-  
-
   gameLoop = () => {
     if (this.state.gameOver) return;
-    this.setState(({ chipmunk, acorn, score }) => {
+    this.setState(({ chipmunk, acorn }) => {
       const nextState = {
         chipmunk: {
           ...chipmunk,
@@ -130,6 +117,7 @@ export class Game extends Component {
           tail: [chipmunk.head, ...chipmunk.tail]
           },
           acorn: this.collidesWithAcorn() ? this.getRandomAcorn() : acorn,
+
         };
       if (!this.collidesWithAcorn()) nextState.chipmunk.tail.pop();
       return nextState;
@@ -144,7 +132,7 @@ export class Game extends Component {
   }
 
   updateState = () => {
-    this.setState(() => {
+    this.setState(({scores, chipmunk}) => {
       const nextState = {
         gameId: 2,
         acorn: {
@@ -152,7 +140,7 @@ export class Game extends Component {
           col: getRandomPosition()
         },
         gameOver: false,
-        score: [],
+        scores: [...scores, chipmunk.tail.length-2],
         chipmunk: {
           head: {
             row: getRandomChipmunk,
@@ -178,8 +166,6 @@ export class Game extends Component {
       return nextState;
     });
   }
-
-  
 
   setDirection = (e) => {
     e = e || window.event;
@@ -243,39 +229,44 @@ export class Game extends Component {
   } 
 
   render() {
-    const { grid, chipmunk, gameOver, score } = this.state;
+    const { grid, chipmunk, gameOver, scores } = this.state;
     return (
       <>
         <div className="container">
-          <Header score={chipmunk.tail.length - 2}/> 
-          {
+          <h1 className="text-center mb-5">Chipmunk Game</h1> 
+          <div className="col-md-6 mb-4">
+            <h3 className="d-inline col-md-3">Score actual:  {chipmunk.tail.length - 2}</h3>
+            {
             gameOver &&
             <button 
-              className="d-inline" 
+              type="button"
+              className="btn btn-success d-inline ml col-md-4" 
               onClick={this.updateState}
             >Jugar de nuevo</button>
-          }        
+            } 
+          </div>
+                 
           <div className="row">
             <section className="col-md-6">
               <div className="grid">
                 {
-                grid.map(row => (
-                  row.map(cell => ( 
-                    <div key={`${cell.row},${cell.col}`} className={`cell
-                    ${
-                    this.setChipmunkHead(cell)
-                    ? 'chipmunkHead': this.setAcorn(cell)
-                    ? 'acorn': this.setChipmunkTail(cell)
-                    ? 'tail': ''
-                    }`
-                    }></div>
+                  grid.map(row => (
+                    row.map(cell => ( 
+                      <div key={`${cell.row},${cell.col}`} className={`cell
+                        ${
+                        this.setChipmunkHead(cell)
+                        ? 'chipmunkHead': this.setAcorn(cell)
+                        ? 'acorn': this.setChipmunkTail(cell)
+                        ? 'tail': ''
+                        }`
+                      }></div>
+                    ))
                   ))
-                ))
                 }
               </div>
             </section>
             <div className="col-md-4">
-              <Board score={chipmunk.tail.length-2} />
+              <Board scores={scores} />
             </div>
           </div>
         </div>         
