@@ -54,7 +54,7 @@ export class Game extends Component {
     });
     setInterval(() => {
       this.game()
-    }, 500); 
+    }, this.state.chipmunk.tail.length ? (500 / this.state.chipmunk.tail.length) + 300 : 500); 
   };  
 
   componentWillUnmount = () => {
