@@ -24,7 +24,6 @@ export class Game extends Component {
         col: getRandomPosition()
       },
       gameOver: false,
-      gameId: 1,
       scores: [],
       chipmunk: {
         head: {
@@ -134,7 +133,6 @@ export class Game extends Component {
   updateState = () => {
     this.setState(({scores, chipmunk}) => {
       const nextState = {
-        gameId: 2,
         acorn: {
           row: getRandomPosition(),
           col: getRandomPosition()
