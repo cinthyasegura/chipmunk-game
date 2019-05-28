@@ -53,12 +53,12 @@ export class Game extends Component {
       this.setDirection(e);
     });
     setInterval(() => {
-      this.gameLoop()
+      this.game()
     }, 500); 
   };  
 
   componentWillUnmount = () => {
-    clearInterval(this.gameLoop)
+    clearInterval(this.game())
   }
 
   setAcorn = (cell) => {
@@ -69,7 +69,6 @@ export class Game extends Component {
     const { chipmunk: { head } } = this.state;
     return head.row === cell.row && head.col === cell.col
   } 
-
   setChipmunkTail = (cell) => {
     const { chipmunk: { tail } } = this.state;
     return tail.find(theTail => theTail.row === cell.row && theTail.col === cell.col); 
@@ -86,24 +85,24 @@ export class Game extends Component {
   }
 
   collidesWithAcorn = () => {
-    const { acorn, chipmunk } = this.state;
-    return acorn.row === chipmunk.head.row && acorn.col === chipmunk.head.col;
+    const { acorn, chipmunk: { head } } = this.state;
+    return acorn.row === head.row && acorn.col === head.col;
   };
 
   getRandomAcorn = () => {
-    const { chipmunk } = this.state;
+    const { chipmunk: { head } } = this.state;
     const newAcorn = {
       row: getRandomPosition(),
       col: getRandomPosition()
     };
-    if (chipmunk.head.row === newAcorn.row && chipmunk.head.col === newAcorn.col) {
+    if (head.row === newAcorn.row && head.col === newAcorn.col) {
       return this.getRandomAcorn();
     } else {      
       return newAcorn;
     }
   };
 
-  gameLoop = () => {
+  game = () => {
     if (this.state.gameOver) return;
     this.setState(({ chipmunk, acorn }) => {
       const nextState = {
@@ -131,14 +130,14 @@ export class Game extends Component {
   }
 
   updateState = () => {
-    this.setState(({scores, chipmunk}) => {
+    this.setState(({ scores, chipmunk }) => {
       const nextState = {
         acorn: {
           row: getRandomPosition(),
           col: getRandomPosition()
         },
         gameOver: false,
-        scores: [...scores, chipmunk.tail.length-2],
+        scores: [...scores, chipmunk.tail.length - 2],
         chipmunk: {
           head: {
             row: getRandomChipmunk,
@@ -159,8 +158,7 @@ export class Game extends Component {
             y: 0
           }
         }
-  
-        };
+      };
       return nextState;
     });
   }
